@@ -1,4 +1,4 @@
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import { BarChart } from "@mantine/charts";
 import { Group, Skeleton } from "@mantine/core";
 import React from "react";
@@ -17,7 +17,7 @@ import {
 } from "./helpers/valueChart";
 import DimmedText from "~/components/core/Text/DimmedText/DimmedText";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface ValueChartProps {
   items: IItem[];
@@ -29,7 +29,7 @@ interface ValueChartProps {
 
 const ValueChart = (props: ValueChartProps): React.ReactNode => {
   const { t } = useTranslation();
-  const { dayjs, dateFormat } = useDate();
+  const { dayjs, dateFormat, intlLocale } = useLocale();
   const { request } = useAuth();
 
   const userSettingsQuery = useQuery({
@@ -57,6 +57,8 @@ const ValueChart = (props: ValueChartProps): React.ReactNode => {
           value,
           false,
           userSettingsQuery.data?.currency ?? "USD",
+          SignDisplay.Auto,
+          intlLocale,
         );
   };
 

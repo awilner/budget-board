@@ -1,13 +1,13 @@
 import { ActionIcon, Badge, Group, Stack } from "@mantine/core";
 import { PencilIcon } from "lucide-react";
 import React from "react";
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import { IAssetResponse } from "~/models/asset";
 import PrimaryText from "~/components/core/Text/PrimaryText/PrimaryText";
 import DimmedText from "~/components/core/Text/DimmedText/DimmedText";
 import StatusText from "~/components/core/Text/StatusText/StatusText";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface AssetItemContentProps {
   asset: IAssetResponse;
@@ -17,7 +17,7 @@ interface AssetItemContentProps {
 
 const AssetItemContent = (props: AssetItemContentProps): React.ReactNode => {
   const { t } = useTranslation();
-  const { dayjs, dateFormat } = useDate();
+  const { dayjs, dateFormat, intlLocale } = useLocale();
 
   return (
     <Stack gap={0} flex="1 1 auto">
@@ -46,6 +46,8 @@ const AssetItemContent = (props: AssetItemContentProps): React.ReactNode => {
             props.asset.currentValue ?? 0,
             true,
             props.userCurrency,
+            SignDisplay.Auto,
+            intlLocale,
           )}
         </StatusText>
       </Group>
@@ -59,6 +61,8 @@ const AssetItemContent = (props: AssetItemContentProps): React.ReactNode => {
                 props.asset.purchasePrice ?? 0,
                 true,
                 props.userCurrency,
+                SignDisplay.Auto,
+                intlLocale,
               ),
             })}
           </DimmedText>

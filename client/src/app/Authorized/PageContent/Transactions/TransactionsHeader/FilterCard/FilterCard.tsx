@@ -10,7 +10,7 @@ import CategorySelect from "~/components/core/Select/CategorySelect/CategorySele
 import DatePickerInput from "~/components/core/Input/DatePickerInput/DatePickerInput";
 import { useTranslation } from "react-i18next";
 import AccountMultiSelect from "~/components/core/Select/AccountMultiSelect/AccountMultiSelect";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface FilterCardProps {
   categories: ICategory[];
@@ -18,7 +18,7 @@ interface FilterCardProps {
 
 const FilterCard = (props: FilterCardProps): React.ReactNode => {
   const { t } = useTranslation();
-  const { dayjs, locale, longDateFormat } = useDate();
+  const { dayjs, dayjsLocale, longDateFormat } = useLocale();
   const { transactionFilters, setTransactionFilters } = useTransactionFilters();
 
   return (
@@ -37,7 +37,7 @@ const FilterCard = (props: FilterCardProps): React.ReactNode => {
             type="range"
             placeholder={t("select_a_date_range")}
             value={transactionFilters.dateRange}
-            locale={locale}
+            locale={dayjsLocale}
             valueFormat={longDateFormat}
             onChange={(dateRange: DatesRangeValue<string>) => {
               const parsedDateRange: [Date | null, Date | null] = [

@@ -7,7 +7,7 @@ import { getCurrencySymbol } from "~/helpers/currency";
 import { IValueCreateRequest, IValueResponse } from "~/models/value";
 import PrimaryText from "~/components/core/Text/PrimaryText/PrimaryText";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 import DateInput from "~/components/core/Input/DateInput/DateInput";
 import NumberInput from "~/components/core/Input/NumberInput/NumberInput";
 
@@ -18,7 +18,13 @@ interface AddValueProps {
 
 const AddValue = (props: AddValueProps): React.ReactNode => {
   const { t } = useTranslation();
-  const { dayjs, locale, longDateFormat } = useDate();
+  const {
+    dayjs,
+    dayjsLocale,
+    longDateFormat,
+    thousandsSeparator,
+    decimalSeparator,
+  } = useLocale();
   const { request } = useAuth();
 
   const amountField = useField<string | number>({
@@ -56,7 +62,7 @@ const AddValue = (props: AddValueProps): React.ReactNode => {
     <Stack gap={10}>
       <DateInput
         {...dateField.getInputProps()}
-        locale={locale}
+        locale={dayjsLocale}
         valueFormat={longDateFormat}
         label={<PrimaryText size="xs">{t("date")}</PrimaryText>}
         maw={400}
@@ -67,7 +73,8 @@ const AddValue = (props: AddValueProps): React.ReactNode => {
         label={<PrimaryText size="xs">{t("amount")}</PrimaryText>}
         prefix={getCurrencySymbol(props.currency)}
         decimalScale={2}
-        thousandSeparator=","
+        thousandSeparator={thousandsSeparator}
+        decimalSeparator={decimalSeparator}
         elevation={0}
       />
       <Button

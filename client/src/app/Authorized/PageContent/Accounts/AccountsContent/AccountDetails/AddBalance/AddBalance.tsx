@@ -11,7 +11,7 @@ import { translateAxiosError } from "~/helpers/requests";
 import { IBalanceCreateRequest } from "~/models/balance";
 import PrimaryText from "~/components/core/Text/PrimaryText/PrimaryText";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 import DateInput from "~/components/core/Input/DateInput/DateInput";
 import NumberInput from "~/components/core/Input/NumberInput/NumberInput";
 
@@ -22,7 +22,13 @@ interface AddBalanceProps {
 
 const AddBalance = (props: AddBalanceProps): React.ReactNode => {
   const { t } = useTranslation();
-  const { dayjs, longDateFormat } = useDate();
+  const {
+    dayjs,
+    dayjsLocale,
+    longDateFormat,
+    thousandsSeparator,
+    decimalSeparator,
+  } = useLocale();
   const { request } = useAuth();
 
   const dateField = useField<Date>({
@@ -59,7 +65,7 @@ const AddBalance = (props: AddBalanceProps): React.ReactNode => {
         {...dateField.getInputProps()}
         label={<PrimaryText size="sm">{t("date")}</PrimaryText>}
         valueFormat={longDateFormat}
-        locale={dayjs.locale()}
+        locale={dayjsLocale}
         elevation={0}
       />
       <NumberInput
@@ -67,7 +73,8 @@ const AddBalance = (props: AddBalanceProps): React.ReactNode => {
         label={<PrimaryText size="sm">{t("amount")}</PrimaryText>}
         prefix={getCurrencySymbol(props.currency)}
         decimalScale={2}
-        thousandSeparator=","
+        decimalSeparator={decimalSeparator}
+        thousandSeparator={thousandsSeparator}
         elevation={0}
       />
       <Button

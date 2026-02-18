@@ -11,7 +11,7 @@ import { AxiosResponse } from "axios";
 import { CornerDownRightIcon, Undo2Icon } from "lucide-react";
 import React from "react";
 import { useAuth } from "~/providers/AuthProvider/AuthProvider";
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import { IAccountResponse } from "~/models/account";
 import {
   ITransaction,
@@ -19,7 +19,7 @@ import {
 } from "~/models/transaction";
 import { IUserSettings } from "~/models/userSettings";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface DuplicateTransactionTableProps {
   tableData: Map<ITransactionImportTableData, ITransaction>;
@@ -41,7 +41,7 @@ const DuplicateTransactionTable = (
   }, [props.tableData]);
 
   const { t } = useTranslation();
-  const { dayjs, dateFormat } = useDate();
+  const { dayjs, dateFormat, intlLocale } = useLocale();
   const { request } = useAuth();
 
   const userSettingsQuery = useQuery({
@@ -149,6 +149,8 @@ const DuplicateTransactionTable = (
                             row.importedTransaction.amount ?? 0,
                             true,
                             userSettingsQuery.data?.currency ?? "USD",
+                            SignDisplay.Auto,
+                            intlLocale,
                           )}
                     </Table.Td>
                     <Table.Td>{row.importedTransaction.account}</Table.Td>
@@ -170,6 +172,8 @@ const DuplicateTransactionTable = (
                             row.existingTransaction.amount ?? 0,
                             true,
                             userSettingsQuery.data?.currency ?? "USD",
+                            SignDisplay.Auto,
+                            intlLocale,
                           )}
                     </Table.Td>
                     <Table.Td>

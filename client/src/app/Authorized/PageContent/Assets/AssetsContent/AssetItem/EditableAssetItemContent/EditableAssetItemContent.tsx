@@ -14,7 +14,11 @@ import { AxiosError } from "axios";
 import { PencilIcon, Trash2Icon, Undo2Icon } from "lucide-react";
 import React from "react";
 import { useAuth } from "~/providers/AuthProvider/AuthProvider";
-import { convertNumberToCurrency, getCurrencySymbol } from "~/helpers/currency";
+import {
+  convertNumberToCurrency,
+  getCurrencySymbol,
+  SignDisplay,
+} from "~/helpers/currency";
 import { translateAxiosError } from "~/helpers/requests";
 import { IAssetResponse, IAssetUpdateRequest } from "~/models/asset";
 import StatusText from "~/components/core/Text/StatusText/StatusText";
@@ -24,7 +28,7 @@ import PrimaryText from "~/components/core/Text/PrimaryText/PrimaryText";
 import NumberInput from "~/components/core/Input/NumberInput/NumberInput";
 import { useTranslation } from "react-i18next";
 import TextInput from "~/components/core/Input/TextInput/TextInput";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface EditableAssetItemContentProps {
   asset: IAssetResponse;
@@ -36,7 +40,15 @@ const EditableAssetItemContent = (
   props: EditableAssetItemContentProps,
 ): React.ReactNode => {
   const { t } = useTranslation();
-  const { dayjs, locale, dateFormat, longDateFormat } = useDate();
+  const {
+    dayjs,
+    dayjsLocale,
+    intlLocale,
+    dateFormat,
+    longDateFormat,
+    thousandsSeparator,
+    decimalSeparator,
+  } = useLocale();
   const { request } = useAuth();
 
   const assetNameField = useField<string>({
@@ -193,6 +205,8 @@ const EditableAssetItemContent = (
               props.asset.currentValue ?? 0,
               true,
               props.userCurrency,
+              SignDisplay.Auto,
+              intlLocale,
             )}
           </StatusText>
         </Group>
@@ -201,7 +215,7 @@ const EditableAssetItemContent = (
             <Group gap="0.5rem">
               <DateInput
                 {...purchaseDate.getInputProps()}
-                locale={locale}
+                locale={dayjsLocale}
                 valueFormat={longDateFormat}
                 placeholder={t("enter_date")}
                 maw={400}
@@ -216,7 +230,8 @@ const EditableAssetItemContent = (
                 placeholder={t("enter_price")}
                 maw={150}
                 prefix={getCurrencySymbol(props.userCurrency)}
-                thousandSeparator=","
+                thousandSeparator={thousandsSeparator}
+                decimalSeparator={decimalSeparator}
                 decimalScale={2}
                 fixedDecimalScale
                 onBlur={() => doUpdateAsset.mutate()}
@@ -229,7 +244,7 @@ const EditableAssetItemContent = (
             <Group gap="0.5rem">
               <DateInput
                 {...sellDate.getInputProps()}
-                locale={locale}
+                locale={dayjsLocale}
                 valueFormat={longDateFormat}
                 placeholder={t("enter_date")}
                 maw={400}
@@ -242,7 +257,8 @@ const EditableAssetItemContent = (
                 placeholder={t("enter_price")}
                 maw={150}
                 prefix={getCurrencySymbol(props.userCurrency)}
-                thousandSeparator=","
+                thousandSeparator={thousandsSeparator}
+                decimalSeparator={decimalSeparator}
                 decimalScale={2}
                 fixedDecimalScale
                 onBlur={() => doUpdateAsset.mutate()}

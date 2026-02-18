@@ -1,6 +1,10 @@
 import classes from "./BudgetParentCard.module.css";
 
-import { convertNumberToCurrency, getCurrencySymbol } from "~/helpers/currency";
+import {
+  convertNumberToCurrency,
+  getCurrencySymbol,
+  SignDisplay,
+} from "~/helpers/currency";
 import {
   ActionIcon,
   Button,
@@ -35,7 +39,7 @@ import Popover from "~/components/core/Popover/Popover";
 import Progress from "~/components/core/Progress/Progress";
 import { ProgressType } from "~/components/core/Progress/ProgressBase/ProgressBase";
 import { useTranslation, Trans } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 export interface BudgetParentCardProps {
   categoryTree: ICategoryNode;
@@ -50,7 +54,8 @@ const BudgetParentCard = (props: BudgetParentCardProps): React.ReactNode => {
   const [isSelected, { toggle, close }] = useDisclosure(false);
 
   const { t } = useTranslation();
-  const { dayjs } = useDate();
+  const { dayjs, intlLocale, thousandsSeparator, decimalSeparator } =
+    useLocale();
 
   const isIncome = areStringsEqual(props.categoryTree.value, "income");
   const limit =
@@ -284,6 +289,8 @@ const BudgetParentCard = (props: BudgetParentCardProps): React.ReactNode => {
                             amount * (isIncome ? 1 : -1),
                             false,
                             userSettingsQuery.data?.currency ?? "USD",
+                            SignDisplay.Auto,
+                            intlLocale,
                           ),
                         }}
                         components={[
@@ -295,6 +302,8 @@ const BudgetParentCard = (props: BudgetParentCardProps): React.ReactNode => {
                         <NumberInput
                           {...newLimitField.getInputProps()}
                           onBlur={() => handleEdit(newLimitField.getValue())}
+                          thousandSeparator={thousandsSeparator}
+                          decimalSeparator={decimalSeparator}
                           min={childLimitsTotal}
                           max={999999}
                           step={1}
@@ -324,11 +333,15 @@ const BudgetParentCard = (props: BudgetParentCardProps): React.ReactNode => {
                           amount * (isIncome ? 1 : -1),
                           false,
                           userSettingsQuery.data?.currency ?? "USD",
+                          SignDisplay.Auto,
+                          intlLocale,
                         ),
                         total: convertNumberToCurrency(
                           limit,
                           false,
                           userSettingsQuery.data?.currency ?? "USD",
+                          SignDisplay.Auto,
+                          intlLocale,
                         ),
                       }}
                       components={[
@@ -366,6 +379,8 @@ const BudgetParentCard = (props: BudgetParentCardProps): React.ReactNode => {
                       roundAwayFromZero(limit - amount * (isIncome ? 1 : -1)),
                       false,
                       userSettingsQuery.data?.currency ?? "USD",
+                      SignDisplay.Auto,
+                      intlLocale,
                     ),
                   }}
                   components={[

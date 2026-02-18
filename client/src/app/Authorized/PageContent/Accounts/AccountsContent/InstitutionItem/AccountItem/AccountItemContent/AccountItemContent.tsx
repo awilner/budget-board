@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import DimmedText from "~/components/core/Text/DimmedText/DimmedText";
 import PrimaryText from "~/components/core/Text/PrimaryText/PrimaryText";
 import StatusText from "~/components/core/Text/StatusText/StatusText";
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import { AccountSource, IAccountResponse } from "~/models/account";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface IAccountItemContentProps {
   account: IAccountResponse;
@@ -16,7 +16,7 @@ interface IAccountItemContentProps {
 
 const AccountItemContent = (props: IAccountItemContentProps) => {
   const { t } = useTranslation();
-  const { dayjs, dateFormat } = useDate();
+  const { dayjs, dateFormat, intlLocale } = useLocale();
 
   const getAccountSourceBadgeColor = (): string => {
     switch (props.account.source) {
@@ -51,7 +51,10 @@ const AccountItemContent = (props: IAccountItemContentProps) => {
           </ActionIcon>
           <Badge>
             {t("interest_rate_message", {
-              rate: ((props.account.interestRate ?? 0) * 100).toFixed(2),
+              rate: new Intl.NumberFormat(intlLocale, {
+                style: "percent",
+                maximumFractionDigits: 2,
+              }).format(props.account.interestRate ?? 0),
             })}
           </Badge>
           {props.account.hideAccount && (
@@ -69,6 +72,8 @@ const AccountItemContent = (props: IAccountItemContentProps) => {
             props.account.currentBalance,
             true,
             props.userCurrency,
+            SignDisplay.Auto,
+            intlLocale,
           )}
         </StatusText>
       </Group>

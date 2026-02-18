@@ -5,7 +5,7 @@ import {
   buildTransactionChartData,
   buildTransactionChartSeries,
 } from "~/helpers/charts";
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import { Group, Skeleton } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "~/providers/AuthProvider/AuthProvider";
@@ -14,7 +14,7 @@ import { AxiosResponse } from "axios";
 import ChartTooltip from "../ChartTooltip/ChartTooltip";
 import DimmedText from "~/components/core/Text/DimmedText/DimmedText";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface SpendingChartProps {
   transactions: ITransaction[];
@@ -28,7 +28,7 @@ const SpendingChart = (props: SpendingChartProps): React.ReactNode => {
   const sortedMonths = props.months.sort((a, b) => a.getTime() - b.getTime());
 
   const { t } = useTranslation();
-  const { dayjs } = useDate();
+  const { dayjs, intlLocale } = useLocale();
   const { request } = useAuth();
 
   const userSettingsQuery = useQuery({
@@ -71,6 +71,8 @@ const SpendingChart = (props: SpendingChartProps): React.ReactNode => {
           value,
           false,
           userSettingsQuery.data?.currency ?? "USD",
+          SignDisplay.Auto,
+          intlLocale,
         );
   };
 

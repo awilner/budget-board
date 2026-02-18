@@ -22,7 +22,7 @@ import DateInput from "~/components/core/Input/DateInput/DateInput";
 import CategorySelect from "~/components/core/Select/CategorySelect/CategorySelect";
 import Select from "~/components/core/Select/Select/Select";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 export interface ConditionItemProps {
   ruleParameter: IRuleParameterEdit;
@@ -35,7 +35,8 @@ export interface ConditionItemProps {
 
 const ConditionItem = (props: ConditionItemProps): React.ReactNode => {
   const { t } = useTranslation();
-  const { locale, longDateFormat } = useDate();
+  const { dayjsLocale, longDateFormat, thousandsSeparator, decimalSeparator } =
+    useLocale();
   const { request } = useAuth();
 
   const userSettingsQuery = useQuery({
@@ -84,7 +85,8 @@ const ConditionItem = (props: ConditionItemProps): React.ReactNode => {
           }
           prefix={getCurrencySymbol(userSettingsQuery.data?.currency)}
           decimalScale={2}
-          thousandSeparator=","
+          thousandSeparator={thousandsSeparator}
+          decimalSeparator={decimalSeparator}
           elevation={2}
         />
       );
@@ -94,7 +96,7 @@ const ConditionItem = (props: ConditionItemProps): React.ReactNode => {
           flex="1 1 auto"
           placeholder={t("select_a_date")}
           value={props.ruleParameter.value}
-          locale={locale}
+          locale={dayjsLocale}
           valueFormat={longDateFormat}
           onChange={(value) =>
             props.setRuleParameter({

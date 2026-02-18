@@ -11,7 +11,7 @@ import { getCurrencySymbol } from "~/helpers/currency";
 import { translateAxiosError } from "~/helpers/requests";
 import { IBalanceResponse, IBalanceUpdateRequest } from "~/models/balance";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 import DateInput from "~/components/core/Input/DateInput/DateInput";
 import NumberInput from "~/components/core/Input/NumberInput/NumberInput";
 
@@ -25,7 +25,13 @@ const EditableBalanceItemContent = (
   props: EditableBalanceItemContentProps,
 ): React.ReactNode => {
   const { t } = useTranslation();
-  const { dayjs, longDateFormat } = useDate();
+  const {
+    dayjs,
+    longDateFormat,
+    dayjsLocale,
+    thousandsSeparator,
+    decimalSeparator,
+  } = useLocale();
   const { request } = useAuth();
 
   const balanceAmountField = useField<string | number | undefined>({
@@ -137,7 +143,7 @@ const EditableBalanceItemContent = (
         <DateInput
           {...balanceDateField.getInputProps()}
           flex="1 1 auto"
-          locale={dayjs.locale()}
+          locale={dayjsLocale}
           valueFormat={longDateFormat}
           elevation={2}
         />
@@ -145,7 +151,8 @@ const EditableBalanceItemContent = (
           {...balanceAmountField.getInputProps()}
           flex="1 1 auto"
           prefix={getCurrencySymbol(props.userCurrency)}
-          thousandSeparator=","
+          thousandSeparator={thousandsSeparator}
+          decimalSeparator={decimalSeparator}
           decimalScale={2}
           fixedDecimalScale
           onBlur={() => doUpdateBalance.mutate()}

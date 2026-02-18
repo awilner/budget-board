@@ -13,21 +13,27 @@ const localeMap: Record<string, string> = {
   "zh-hans": "zh-cn",
 };
 
-export interface DateContextValue {
+export interface LocaleContextValue {
   dayjs: typeof dayjs;
-  locale: string;
+  dayjsLocale: string;
+  intlLocale: string;
   dateFormat: string;
   longDateFormat: string;
+  decimalSeparator: string;
+  thousandsSeparator: string;
 }
 
-export const DateContext = React.createContext<DateContextValue>({
+export const LocaleContext = React.createContext<LocaleContextValue>({
   dayjs,
-  locale: "en",
+  dayjsLocale: "en",
+  intlLocale: "en-US",
   dateFormat: "L",
   longDateFormat: "LL",
+  decimalSeparator: ".",
+  thousandsSeparator: ",",
 });
 
-export const DateProvider = ({
+export const LocaleProvider = ({
   children,
 }: {
   children: React.ReactNode;
@@ -70,7 +76,7 @@ export const DateProvider = ({
     dayjs.locale(dayjsLocale);
   }, [i18n.language]);
 
-  const dateValue: DateContextValue = React.useMemo(() => {
+  const localeValue: LocaleContextValue = React.useMemo(() => {
     const dayjsLocale = localeMap[i18n.language] || "en";
     const userDateFormat = userSettingsQuery.data?.dateFormat;
 
@@ -78,17 +84,27 @@ export const DateProvider = ({
     const dateFormat =
       userDateFormat && userDateFormat !== "default" ? userDateFormat : "L";
 
+    const formatter = new Intl.NumberFormat(dayjsLocale);
+    const parts = formatter.formatToParts(1234.56);
+
     return {
       dayjs,
-      locale: dayjsLocale,
+      dayjsLocale,
+      intlLocale: i18n.language,
       dateFormat,
       longDateFormat: getLongDateFormat(dateFormat),
+      decimalSeparator:
+        parts.find((part) => part.type === "decimal")?.value || ".",
+      thousandsSeparator:
+        parts.find((part) => part.type === "group")?.value || ",",
     };
   }, [i18n.language, userSettingsQuery.data?.dateFormat]);
 
   return (
-    <DateContext.Provider value={dateValue}>{children}</DateContext.Provider>
+    <LocaleContext.Provider value={localeValue}>
+      {children}
+    </LocaleContext.Provider>
   );
 };
 
-export const useDate = () => React.useContext(DateContext);
+export const useLocale = () => React.useContext(LocaleContext);

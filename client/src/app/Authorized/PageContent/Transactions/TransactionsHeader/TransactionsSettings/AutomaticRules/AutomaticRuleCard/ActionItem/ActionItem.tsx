@@ -9,7 +9,7 @@ import {
   TransactionFields,
 } from "~/models/automaticRule";
 import { ICategory } from "~/models/category";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface ActionItemProps {
   action: IRuleParameterResponse;
@@ -19,7 +19,7 @@ interface ActionItemProps {
 
 const ActionItem = (props: ActionItemProps) => {
   const { t } = useTranslation();
-  const { dayjs, dateFormat } = useDate();
+  const { dayjs, dateFormat, intlLocale } = useLocale();
 
   const formatDate = (dateStr: string): string =>
     dayjs(dateStr).format(dateFormat);
@@ -41,6 +41,7 @@ const ActionItem = (props: ActionItemProps) => {
               props.currency,
               props.categories,
               formatDate,
+              intlLocale,
             )}
           </Badge>
         </>

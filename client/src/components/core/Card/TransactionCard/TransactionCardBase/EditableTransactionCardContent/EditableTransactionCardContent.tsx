@@ -20,7 +20,7 @@ import DateInput from "~/components/core/Input/DateInput/DateInput";
 import CategorySelect from "~/components/core/Select/CategorySelect/CategorySelect";
 import TextInput from "~/components/core/Input/TextInput/TextInput";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface EditableTransactionCardProps {
   transaction: ITransaction;
@@ -48,7 +48,13 @@ const EditableTransactionCardContent = (
   });
 
   const { t } = useTranslation();
-  const { dayjs, longDateFormat } = useDate();
+  const {
+    dayjs,
+    dayjsLocale,
+    longDateFormat,
+    thousandsSeparator,
+    decimalSeparator,
+  } = useLocale();
   const { request } = useAuth();
 
   const userSettingsQuery = useQuery({
@@ -193,7 +199,7 @@ const EditableTransactionCardContent = (
               w="100%"
               {...dateField.getInputProps()}
               valueFormat={longDateFormat}
-              locale={dayjs.locale()}
+              locale={dayjsLocale}
               onChange={onDateChange}
               elevation={props.elevation}
             />
@@ -232,6 +238,8 @@ const EditableTransactionCardContent = (
               onBlur={handleSubmit}
               onClick={(e) => e.stopPropagation()}
               prefix={getCurrencySymbol(userSettingsQuery.data?.currency)}
+              thousandSeparator={thousandsSeparator}
+              decimalSeparator={decimalSeparator}
               decimalScale={2}
               fixedDecimalScale
               elevation={props.elevation}

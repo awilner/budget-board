@@ -12,7 +12,7 @@ import Select from "~/components/core/Select/Select/Select";
 import DimmedText from "~/components/core/Text/DimmedText/DimmedText";
 import PrimaryText from "~/components/core/Text/PrimaryText/PrimaryText";
 import StatusText from "~/components/core/Text/StatusText/StatusText";
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import {
   lunchFlowAccountQueryKey,
   translateAxiosError,
@@ -20,7 +20,7 @@ import {
 import { AccountSource, IAccountResponse } from "~/models/account";
 import { ILunchFlowAccountResponse } from "~/models/lunchFlowAccount";
 import { useAuth } from "~/providers/AuthProvider/AuthProvider";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface ILunchFlowAccountCardProps {
   lunchFlowAccount: ILunchFlowAccountResponse;
@@ -38,7 +38,7 @@ const LunchFlowAccountCard = (
   });
 
   const { t } = useTranslation();
-  const { dayjs, dateFormat } = useDate();
+  const { dayjs, dateFormat, intlLocale } = useLocale();
   const { request } = useAuth();
 
   const accountsQuery = useQuery({
@@ -203,6 +203,8 @@ const LunchFlowAccountCard = (
               props.lunchFlowAccount.balance,
               true,
               accountCurrency,
+              SignDisplay.Auto,
+              intlLocale,
             )}
           </StatusText>
         </Group>

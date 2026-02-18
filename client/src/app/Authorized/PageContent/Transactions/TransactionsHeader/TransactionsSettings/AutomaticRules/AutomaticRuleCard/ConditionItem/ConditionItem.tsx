@@ -9,7 +9,7 @@ import {
   TransactionFields,
 } from "~/models/automaticRule";
 import { ICategory } from "~/models/category";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface ConditionItemProps {
   condition: IRuleParameterResponse;
@@ -19,7 +19,7 @@ interface ConditionItemProps {
 
 const ConditionItem = (props: ConditionItemProps) => {
   const { t } = useTranslation();
-  const { dayjs, dateFormat } = useDate();
+  const { dayjs, dateFormat, intlLocale } = useLocale();
 
   const fieldLabelKey = TransactionFields.find(
     (field) => field.value === props.condition.field,
@@ -48,6 +48,7 @@ const ConditionItem = (props: ConditionItemProps) => {
             props.currency,
             props.categories,
             formatDate,
+            intlLocale,
           )}
         </Badge>
       </Group>

@@ -12,7 +12,7 @@ import Select from "~/components/core/Select/Select/Select";
 import DimmedText from "~/components/core/Text/DimmedText/DimmedText";
 import PrimaryText from "~/components/core/Text/PrimaryText/PrimaryText";
 import StatusText from "~/components/core/Text/StatusText/StatusText";
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import {
   simpleFinAccountQueryKey,
   simpleFinOrganizationQueryKey,
@@ -21,7 +21,7 @@ import {
 import { AccountSource, IAccountResponse } from "~/models/account";
 import { ISimpleFinAccountResponse } from "~/models/simpleFinAccount";
 import { useAuth } from "~/providers/AuthProvider/AuthProvider";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface ISimpleFinAccountCardProps {
   simpleFinAccount: ISimpleFinAccountResponse;
@@ -39,7 +39,7 @@ const SimpleFinAccountCard = (
   });
 
   const { t } = useTranslation();
-  const { dayjs, dateFormat } = useDate();
+  const { dayjs, dateFormat, intlLocale } = useLocale();
   const { request } = useAuth();
 
   const accountsQuery = useQuery({
@@ -207,6 +207,8 @@ const SimpleFinAccountCard = (
               props.simpleFinAccount.balance,
               true,
               accountCurrency,
+              SignDisplay.Auto,
+              intlLocale,
             )}
           </StatusText>
         </Group>

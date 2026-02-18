@@ -14,7 +14,11 @@ import { AxiosError, AxiosResponse } from "axios";
 import React from "react";
 import { useAuth } from "~/providers/AuthProvider/AuthProvider";
 import { sumAccountsTotalBalance } from "~/helpers/accounts";
-import { convertNumberToCurrency, getCurrencySymbol } from "~/helpers/currency";
+import {
+  convertNumberToCurrency,
+  getCurrencySymbol,
+  SignDisplay,
+} from "~/helpers/currency";
 import { IGoalResponse, IGoalUpdateRequest } from "~/models/goal";
 import { IUserSettings } from "~/models/userSettings";
 import { notifications } from "@mantine/notifications";
@@ -33,7 +37,7 @@ import DateInput from "~/components/core/Input/DateInput/DateInput";
 import Progress from "~/components/core/Progress/Progress";
 import { ProgressType } from "~/components/core/Progress/ProgressBase/ProgressBase";
 import { Trans, useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface GoalCardContentProps {
   goal: IGoalResponse;
@@ -45,7 +49,14 @@ const EditableGoalCardContent = (
   props: GoalCardContentProps,
 ): React.ReactNode => {
   const { t } = useTranslation();
-  const { dayjs, locale, longDateFormat } = useDate();
+  const {
+    dayjs,
+    dayjsLocale,
+    intlLocale,
+    longDateFormat,
+    thousandsSeparator,
+    decimalSeparator,
+  } = useLocale();
   const { request } = useAuth();
 
   const goalNameField = useField<string>({
@@ -257,10 +268,10 @@ const EditableGoalCardContent = (
               {props.includeInterest && props.goal.interestRate && (
                 <Badge variant="light">
                   {t("interest_rate_apr", {
-                    rate: props.goal.interestRate.toLocaleString(undefined, {
+                    rate: new Intl.NumberFormat(intlLocale, {
                       style: "percent",
-                      minimumFractionDigits: 2,
-                    }),
+                      maximumFractionDigits: 2,
+                    }).format(props.goal.interestRate),
                   })}
                 </Badge>
               )}
@@ -300,6 +311,8 @@ const EditableGoalCardContent = (
                           props.goal.initialAmount,
                         false,
                         userSettingsQuery.data?.currency ?? "USD",
+                        SignDisplay.Auto,
+                        intlLocale,
                       ),
                     }}
                     components={[
@@ -318,7 +331,8 @@ const EditableGoalCardContent = (
                       prefix={getCurrencySymbol(
                         userSettingsQuery.data?.currency,
                       )}
-                      thousandSeparator=","
+                      thousandSeparator={thousandsSeparator}
+                      decimalSeparator={decimalSeparator}
                       {...goalTargetAmountField.getInputProps()}
                       onBlur={submitChanges}
                       elevation={1}
@@ -334,6 +348,8 @@ const EditableGoalCardContent = (
                         props.goal.initialAmount,
                       false,
                       userSettingsQuery.data?.currency ?? "USD",
+                      SignDisplay.Auto,
+                      intlLocale,
                     ),
                     total: convertNumberToCurrency(
                       getGoalTargetAmount(
@@ -342,6 +358,8 @@ const EditableGoalCardContent = (
                       ),
                       false,
                       userSettingsQuery.data?.currency ?? "USD",
+                      SignDisplay.Auto,
+                      intlLocale,
                     ),
                   }}
                   components={[
@@ -374,6 +392,8 @@ const EditableGoalCardContent = (
                             props.goal.initialAmount,
                           false,
                           userSettingsQuery.data?.currency ?? "USD",
+                          SignDisplay.Auto,
+                          intlLocale,
                         ),
                       }}
                       components={[<DimmedText size="sm" key="label" />]}
@@ -386,7 +406,7 @@ const EditableGoalCardContent = (
                       <DateInput
                         className="h-8"
                         {...goalTargetDateField.getInputProps()}
-                        locale={locale}
+                        locale={dayjsLocale}
                         valueFormat={longDateFormat}
                         onChange={submitTargetDateChanges}
                       />
@@ -419,6 +439,8 @@ const EditableGoalCardContent = (
                           props.goal.initialAmount,
                         false,
                         userSettingsQuery.data?.currency ?? "USD",
+                        SignDisplay.Auto,
+                        intlLocale,
                       ),
                     }}
                     components={[
@@ -440,7 +462,8 @@ const EditableGoalCardContent = (
                       prefix={getCurrencySymbol(
                         userSettingsQuery.data?.currency,
                       )}
-                      thousandSeparator=","
+                      thousandSeparator={thousandsSeparator}
+                      decimalSeparator={decimalSeparator}
                       {...goalMonthlyContributionField.getInputProps()}
                       onBlur={submitChanges}
                       elevation={1}
@@ -458,11 +481,15 @@ const EditableGoalCardContent = (
                       props.goal.monthlyContributionProgress,
                       false,
                       userSettingsQuery.data?.currency ?? "USD",
+                      SignDisplay.Auto,
+                      intlLocale,
                     ),
                     total: convertNumberToCurrency(
                       props.goal.monthlyContribution,
                       false,
                       userSettingsQuery.data?.currency ?? "USD",
+                      SignDisplay.Auto,
+                      intlLocale,
                     ),
                   }}
                   components={[

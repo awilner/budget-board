@@ -15,7 +15,7 @@ import DateInput from "~/components/core/Input/DateInput/DateInput";
 import NumberInput from "~/components/core/Input/NumberInput/NumberInput";
 import { useTranslation } from "react-i18next";
 import AccountMultiSelect from "~/components/core/Select/AccountMultiSelect/AccountMultiSelect";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface FormValues {
   goalName: string;
@@ -40,7 +40,13 @@ const PayGoalForm = (): React.ReactNode => {
   });
 
   const { t } = useTranslation();
-  const { dayjs, locale, longDateFormat } = useDate();
+  const {
+    dayjs,
+    dayjsLocale,
+    longDateFormat,
+    thousandsSeparator,
+    decimalSeparator,
+  } = useLocale();
   const { request } = useAuth();
 
   const userSettingsQuery = useQuery({
@@ -136,7 +142,7 @@ const PayGoalForm = (): React.ReactNode => {
                 clearable
                 key={form.key("goalCompleteDate")}
                 {...form.getInputProps("goalCompleteDate")}
-                locale={locale}
+                locale={dayjsLocale}
                 valueFormat={longDateFormat}
                 elevation={1}
               />
@@ -152,7 +158,8 @@ const PayGoalForm = (): React.ReactNode => {
                 prefix={getCurrencySymbol(userSettingsQuery.data?.currency)}
                 min={0}
                 decimalScale={2}
-                thousandSeparator=","
+                thousandSeparator={thousandsSeparator}
+                decimalSeparator={decimalSeparator}
                 key={form.key("goalMonthlyContribution")}
                 {...form.getInputProps("goalMonthlyContribution")}
                 elevation={1}

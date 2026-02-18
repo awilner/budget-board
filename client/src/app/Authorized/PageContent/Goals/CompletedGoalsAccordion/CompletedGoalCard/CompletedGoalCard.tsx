@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 import React from "react";
 import { useAuth } from "~/providers/AuthProvider/AuthProvider";
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import { getGoalTargetAmount } from "~/helpers/goals";
 import { IGoalResponse } from "~/models/goal";
 import { IUserSettings } from "~/models/userSettings";
@@ -11,7 +11,7 @@ import Card from "~/components/core/Card/Card";
 import PrimaryText from "~/components/core/Text/PrimaryText/PrimaryText";
 import DimmedText from "~/components/core/Text/DimmedText/DimmedText";
 import { Trans } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface CompletedGoalCardProps {
   goal: IGoalResponse;
@@ -19,7 +19,7 @@ interface CompletedGoalCardProps {
 
 const CompletedGoalCard = (props: CompletedGoalCardProps): React.ReactNode => {
   const { request } = useAuth();
-  const { dayjs } = useDate();
+  const { dayjs, intlLocale } = useLocale();
 
   const userSettingsQuery = useQuery({
     queryKey: ["userSettings"],
@@ -62,6 +62,8 @@ const CompletedGoalCard = (props: CompletedGoalCardProps): React.ReactNode => {
                   ),
                   true,
                   userSettingsQuery.data?.currency ?? "USD",
+                  SignDisplay.Auto,
+                  intlLocale,
                 ),
               }}
               components={[

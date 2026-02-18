@@ -22,13 +22,19 @@ import NumberInput from "~/components/core/Input/NumberInput/NumberInput";
 import DateInput from "~/components/core/Input/DateInput/DateInput";
 import { useTranslation } from "react-i18next";
 import AccountMultiSelect from "~/components/core/Select/AccountMultiSelect/AccountMultiSelect";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 const CreateTransactionModal = (): React.ReactNode => {
   const [opened, { open, close }] = useDisclosure(false);
 
   const { t } = useTranslation();
-  const { dayjs, locale, longDateFormat } = useDate();
+  const {
+    dayjs,
+    dayjsLocale,
+    longDateFormat,
+    thousandsSeparator,
+    decimalSeparator,
+  } = useLocale();
   const { transactionCategories } = useTransactionCategories();
   const { request } = useAuth();
 
@@ -137,7 +143,7 @@ const CreateTransactionModal = (): React.ReactNode => {
             label={<PrimaryText size="sm">{t("date")}</PrimaryText>}
             placeholder={t("select_a_date")}
             {...dateField.getInputProps()}
-            locale={locale}
+            locale={dayjsLocale}
             valueFormat={longDateFormat}
             elevation={0}
           />
@@ -159,7 +165,8 @@ const CreateTransactionModal = (): React.ReactNode => {
             placeholder={t("enter_amount")}
             prefix={getCurrencySymbol(userSettingsQuery.data?.currency)}
             decimalScale={2}
-            thousandSeparator=","
+            thousandSeparator={thousandsSeparator}
+            decimalSeparator={decimalSeparator}
             {...amountField.getInputProps()}
             elevation={0}
           />

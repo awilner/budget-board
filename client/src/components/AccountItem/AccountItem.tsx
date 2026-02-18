@@ -1,6 +1,6 @@
 import classes from "./AccountItem.module.css";
 
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import { Group, Stack } from "@mantine/core";
 import { IAccountResponse } from "~/models/account";
 import React from "react";
@@ -12,7 +12,7 @@ import PrimaryText from "../core/Text/PrimaryText/PrimaryText";
 import StatusText from "../core/Text/StatusText/StatusText";
 import DimmedText from "../core/Text/DimmedText/DimmedText";
 import { useTranslation } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface AccountItemProps {
   account: IAccountResponse;
@@ -22,7 +22,7 @@ interface AccountItemProps {
 const AccountItem = (props: AccountItemProps): React.ReactNode => {
   const { t } = useTranslation();
   const { request } = useAuth();
-  const { dayjs, dateFormat } = useDate();
+  const { dayjs, dateFormat, intlLocale } = useLocale();
 
   const userSettingsQuery = useQuery({
     queryKey: ["userSettings"],
@@ -54,6 +54,8 @@ const AccountItem = (props: AccountItemProps): React.ReactNode => {
               props.account.currentBalance,
               true,
               userSettingsQuery.data?.currency ?? "USD",
+              SignDisplay.Auto,
+              intlLocale,
             )}
           </StatusText>
         )}

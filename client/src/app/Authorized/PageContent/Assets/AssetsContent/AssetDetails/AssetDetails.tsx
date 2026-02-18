@@ -6,7 +6,7 @@ import {
   Stack,
 } from "@mantine/core";
 import { MoveRightIcon } from "lucide-react";
-import { convertNumberToCurrency } from "~/helpers/currency";
+import { convertNumberToCurrency, SignDisplay } from "~/helpers/currency";
 import { IAssetResponse } from "~/models/asset";
 import AddValue from "./AddValue/AddValue";
 import React from "react";
@@ -22,7 +22,7 @@ import DimmedText from "~/components/core/Text/DimmedText/DimmedText";
 import StatusText from "~/components/core/Text/StatusText/StatusText";
 import Accordion from "~/components/core/Accordion/Accordion";
 import { useTranslation, Trans } from "react-i18next";
-import { useDate } from "~/providers/DateProvider/DateProvider";
+import { useLocale } from "~/providers/LocaleProvider/LocaleProvider";
 
 interface AssetDetailsProps {
   isOpen: boolean;
@@ -35,7 +35,7 @@ const AssetDetails = (props: AssetDetailsProps): React.ReactNode => {
   const [chartLookbackMonths, setChartLookbackMonths] = React.useState(6);
 
   const { t } = useTranslation();
-  const { dayjs, longDateFormat } = useDate();
+  const { dayjs, longDateFormat, intlLocale } = useLocale();
   const { request } = useAuth();
 
   const valuesQuery = useQuery({
@@ -101,6 +101,8 @@ const AssetDetails = (props: AssetDetailsProps): React.ReactNode => {
                       props.asset.purchasePrice,
                       true,
                       props.userCurrency,
+                      SignDisplay.Auto,
+                      intlLocale,
                     ),
                   }}
                   components={[
@@ -124,7 +126,8 @@ const AssetDetails = (props: AssetDetailsProps): React.ReactNode => {
                       props.asset.sellPrice - props.asset.purchasePrice,
                       true,
                       props.userCurrency,
-                      "always",
+                      SignDisplay.Always,
+                      intlLocale,
                     )}
                   </StatusText>
                 </Stack>
@@ -140,6 +143,8 @@ const AssetDetails = (props: AssetDetailsProps): React.ReactNode => {
                         props.asset.sellPrice,
                         true,
                         props.userCurrency,
+                        SignDisplay.Auto,
+                        intlLocale,
                       ),
                     }}
                     components={[
